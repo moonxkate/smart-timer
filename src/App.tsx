@@ -53,6 +53,9 @@ const Timer = () => {
     setIsActive(true);
   };
 
+  const isTimerRunning =
+    mode === "stopwatch" || (mode === "countdown" && seconds > 0);
+
   return (
     <div>
       <h1>
@@ -61,7 +64,7 @@ const Timer = () => {
       <button onClick={() => setMode("stopwatch")}>Stopwatch</button>
       <button onClick={() => setMode("countdown")}>Countdown</button>
 
-      {mode === "countdown" && (
+      {mode === "countdown" && seconds === 0 && (
         <div>
           <input
             type="number"
@@ -72,8 +75,12 @@ const Timer = () => {
         </div>
       )}
 
-      <button onClick={toggle}>{isActive ? "Pause" : "Start"}</button>
-      <button onClick={reset}>Reset</button>
+      {isTimerRunning && (
+        <>
+          <button onClick={toggle}>{isActive ? "Pause" : "Start"}</button>
+          <button onClick={reset}>Reset</button>
+        </>
+      )}
     </div>
   );
 };
