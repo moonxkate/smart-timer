@@ -6,15 +6,28 @@ const Timer = () => {
   const [isActive, setIsActive] = useState<boolean>(false);
   const intervalRef = useRef<number | null>(null);
 
+  type Mode = "stopwatch" | "countdown";
+  const [mode, setMode] = useState<Mode>("countdown");
+  const [inputMinutes, setInputMinutes] = useState<number>(1);
+
   useEffect(() => {
     if (isActive) {
       intervalRef.current = window.setInterval(() => {
-        setSeconds((prev) => prev + 1);
+        setSeconds((prev) => {
+          if (mode === "stopwatch") {
+            return prev + 1;
+          } else {
+            if (prev <= 1) {
+              if (intervalRef.current !== null) {
+                clearInterval(intervalRef.current);
+              }
+              setIsActive(false);
+              return 0;
+            }
+            return prev - 1;
+          }
+        });
       }, 1000);
-    } else {
-      if (intervalRef.current !== null) {
-        clearInterval(intervalRef.current);
-      }
     }
 
     return () => {
@@ -22,9 +35,9 @@ const Timer = () => {
         clearInterval(intervalRef.current);
       }
     };
-  }, [isActive]);
+  }, [isActive, mode]);
 
-  const toggle = () => setIsActive(!isActive);
+  const toggle = () => setIsActive((prev) => !prev);
 
   const reset = () => {
     setIsActive(false);
@@ -32,14 +45,33 @@ const Timer = () => {
   };
 
   const minutes = Math.floor(seconds / 60);
-  const remaigningSeconds = seconds % 60;
+  const remainingSeconds = seconds % 60;
   const formatTime = (value: number) => value.toString().padStart(2, "0");
+
+  const startCountdown = () => {
+    setSeconds(inputMinutes * 60);
+    setIsActive(true);
+  };
 
   return (
     <div>
       <h1>
-        {formatTime(minutes)}:{formatTime(remaigningSeconds)}
+        {formatTime(minutes)}:{formatTime(remainingSeconds)}
       </h1>
+      <button onClick={() => setMode("stopwatch")}>Stopwatch</button>
+      <button onClick={() => setMode("countdown")}>Countdown</button>
+
+      {mode === "countdown" && (
+        <div>
+          <input
+            type="number"
+            value={inputMinutes}
+            onChange={(e) => setInputMinutes(Number(e.target.value))}
+          />
+          <button onClick={startCountdown}>Start</button>
+        </div>
+      )}
+
       <button onClick={toggle}>{isActive ? "Pause" : "Start"}</button>
       <button onClick={reset}>Reset</button>
     </div>
