@@ -8,7 +8,7 @@ const Timer = () => {
 
   type Mode = "stopwatch" | "countdown";
   const [mode, setMode] = useState<Mode>("countdown");
-  const [inputMinutes, setInputMinutes] = useState<number>(1);
+  const [inputMinutes, setInputMinutes] = useState<number | "">(1);
 
   useEffect(() => {
     if (isActive) {
@@ -49,8 +49,10 @@ const Timer = () => {
   const formatTime = (value: number) => value.toString().padStart(2, "0");
 
   const startCountdown = () => {
-    setSeconds(inputMinutes * 60);
-    setIsActive(true);
+    if (inputMinutes !== "" && inputMinutes > 0) {
+      setSeconds(inputMinutes * 60);
+      setIsActive(true);
+    }
   };
 
   const isTimerRunning =
@@ -69,7 +71,10 @@ const Timer = () => {
           <input
             type="number"
             value={inputMinutes}
-            onChange={(e) => setInputMinutes(Number(e.target.value))}
+            onChange={(e) => {
+              const val = e.target.value;
+              setInputMinutes(val === "" ? "" : Number(val));
+            }}
           />
           <button onClick={startCountdown}>Start</button>
         </div>
