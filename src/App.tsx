@@ -44,6 +44,10 @@ const Timer = () => {
     setSeconds(0);
   };
 
+  useEffect(() => {
+    reset();
+  }, [mode]);
+
   const minutes = Math.floor(seconds / 60);
   const remainingSeconds = seconds % 60;
   const formatTime = (value: number) => value.toString().padStart(2, "0");
