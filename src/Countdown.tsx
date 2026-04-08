@@ -11,6 +11,7 @@ const Countdown = ({ onGoHome }: CountdownProps) => {
   const [status, setStatus] = useState<CountdownState>("inactive");
   const intervalRef = useRef<number | null>(null);
   const [inputMinutes, setInputMinutes] = useState<number | "">(1);
+  const [lastDuration, setLastDuration] = useState<number>(1);
 
   useEffect(() => {
     if (status === "running" && seconds > 0) {
@@ -33,6 +34,7 @@ const Countdown = ({ onGoHome }: CountdownProps) => {
   const startCountdown = () => {
     if (inputMinutes !== "" && inputMinutes > 0) {
       setSeconds(inputMinutes * 60);
+      setLastDuration(inputMinutes);
       setStatus("running");
     }
   };
@@ -41,6 +43,11 @@ const Countdown = ({ onGoHome }: CountdownProps) => {
     setStatus((prev) => (prev === "running" ? "paused" : "running"));
 
   const restart = () => {
+    setSeconds(lastDuration * 60);
+    setStatus("running");
+  };
+
+  const reset = () => {
     setSeconds(0);
     setStatus("inactive");
   };
@@ -62,6 +69,7 @@ const Countdown = ({ onGoHome }: CountdownProps) => {
           <h1>Completed</h1>
           <div className="controls">
             <button onClick={restart}>Restart</button>
+            <button onClick={reset}>Reset</button>
             {onGoHome && <button onClick={onGoHome}>Home</button>}
           </div>
         </div>
@@ -89,7 +97,7 @@ const Countdown = ({ onGoHome }: CountdownProps) => {
               <button onClick={toggle}>
                 {status === "running" ? "Pause" : "Resume"}
               </button>
-              <button onClick={restart}>Reset</button>
+              <button onClick={reset}>Reset</button>
             </div>
           )}
         </>
