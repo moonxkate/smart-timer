@@ -3,30 +3,22 @@ import Stopwatch from "./Stopwatch";
 import Countdown from "./Countdown";
 import "./App.css";
 
+type Mode = "home" | "stopwatch" | "countdown";
+
 const App = () => {
-  type Mode = "stopwatch" | "countdown";
-  const [mode, setMode] = useState<Mode>("countdown");
+  const [mode, setMode] = useState<Mode>("home");
 
   return (
-    <div className={`app-container ${mode}-mode`}>
-      <nav className="tabs">
-        <button
-          className={mode === "stopwatch" ? "active" : ""}
-          onClick={() => setMode("stopwatch")}
-        >
-          Stopwatch
-        </button>
-        <button
-          className={mode === "countdown" ? "active" : ""}
-          onClick={() => setMode("countdown")}
-        >
-          Countdown
-        </button>
-      </nav>
-
-      <div className="page-content">
-        {mode === "stopwatch" ? <Stopwatch /> : <Countdown />}
-      </div>
+    <div className="page-content">
+      {mode === "home" && (
+        <div className="home-menu">
+          <h1>Timer</h1>
+          <button onClick={() => setMode("stopwatch")}>Stopwatch</button>
+          <button onClick={() => setMode("countdown")}>Countdown</button>
+        </div>
+      )}
+      {mode === "stopwatch" && <Stopwatch onGoHome={() => setMode("home")} />}
+      {mode === "countdown" && <Countdown onGoHome={() => setMode("home")} />}
     </div>
   );
 };

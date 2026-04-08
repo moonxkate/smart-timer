@@ -1,7 +1,11 @@
 import { useState, useEffect, useRef } from "react";
 import "./App.css";
 
-const Stopwatch = () => {
+interface StopwatchProps {
+  onGoHome?: () => void;
+}
+
+const Stopwatch = ({ onGoHome }: StopwatchProps) => {
   const [seconds, setSeconds] = useState<number>(0);
   const [isActive, setIsActive] = useState<boolean>(false);
   const intervalRef = useRef<number | null>(null);
@@ -40,15 +44,16 @@ const Stopwatch = () => {
   };
 
   return (
-    <div className="stopwatch-container">
+    <div className="timer-page">
       <h2>Stopwatch</h2>
       <div className="timer-display">
         <h1>{formatTime(seconds)}</h1>
       </div>
 
-      <div className="button-group">
+      <div className="controls">
         <button onClick={toggle}>{isActive ? "Pause" : "Start"}</button>
         <button onClick={reset}>Reset</button>
+        {onGoHome && <button onClick={onGoHome}>Home</button>}
       </div>
     </div>
   );

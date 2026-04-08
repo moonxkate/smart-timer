@@ -1,37 +1,48 @@
 import { useState, useEffect, useRef } from "react";
 
-const Countdown = () => {
+type CountdownState = "inactive" | "running" | "paused" | "finished";
+
+interface CountdownProps {
+  onGoHome?: () => void;
+}
+
+const Countdown = ({ onGoHome }: CountdownProps) => {
   const [seconds, setSeconds] = useState<number>(0);
-  const [isActive, setIsActive] = useState<boolean>(false);
+  const [status, setStatus] = useState<CountdownState>("inactive");
   const intervalRef = useRef<number | null>(null);
   const [inputMinutes, setInputMinutes] = useState<number | "">(1);
 
   useEffect(() => {
-    if (isActive && seconds > 0) {
+    if (status === "running" && seconds > 0) {
       intervalRef.current = window.setInterval(() => {
-        setSeconds((prev) => (prev <= 1 ? 0 : prev - 1));
+        setSeconds((prev) => {
+          if (prev <= 1) {
+            clearInterval(intervalRef.current!);
+            setStatus("finished");
+            return 0;
+          }
+          return prev - 1;
+        });
       }, 1000);
-    } else if (seconds === 0) {
-      setIsActive(false);
-      if (intervalRef.current) clearInterval(intervalRef.current);
     }
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
-  }, [isActive, seconds]);
+  }, [status]);
 
   const startCountdown = () => {
     if (inputMinutes !== "" && inputMinutes > 0) {
       setSeconds(inputMinutes * 60);
-      setIsActive(true);
+      setStatus("running");
     }
   };
 
-  const toggle = () => setIsActive((prev) => !prev);
+  const toggle = () =>
+    setStatus((prev) => (prev === "running" ? "paused" : "running"));
 
-  const reset = () => {
-    setIsActive(false);
+  const restart = () => {
     setSeconds(0);
+    setStatus("inactive");
   };
 
   const formatTime = (totalSeconds: number) => {
@@ -45,35 +56,43 @@ const Countdown = () => {
   return (
     <div className="timer-page">
       <h2>Countdown</h2>
-      <h1>{formatTime(seconds)}</h1>
 
-      {seconds === 0 ? (
-        <div className="setup">
-          <input
-            type="number"
-            value={inputMinutes}
-            onChange={(e) =>
-              setInputMinutes(
-                e.target.value === "" ? "" : Number(e.target.value)
-              )
-            }
-          />
-          <button onClick={startCountdown}>Start</button>
+      {status === "finished" ? (
+        <div className="finished">
+          <h1>Completed</h1>
+          <div className="controls">
+            <button onClick={restart}>Restart</button>
+            {onGoHome && <button onClick={onGoHome}>Home</button>}
+          </div>
         </div>
       ) : (
-        <div className="controls">
-          <button onClick={() => setIsActive(!isActive)}>
-            {isActive ? "Pause" : "Resume"}
-          </button>
-          <button
-            onClick={() => {
-              setSeconds(0);
-              setIsActive(false);
-            }}
-          >
-            Reset
-          </button>
-        </div>
+        <>
+          <h1>{formatTime(seconds)}</h1>
+
+          {status === "inactive" ? (
+            <div className="setup">
+              <input
+                type="number"
+                value={inputMinutes}
+                min={1}
+                onChange={(e) =>
+                  setInputMinutes(
+                    e.target.value === "" ? "" : Number(e.target.value)
+                  )
+                }
+              />
+              <button onClick={startCountdown}>Start</button>
+              {onGoHome && <button onClick={onGoHome}>Home</button>}
+            </div>
+          ) : (
+            <div className="controls">
+              <button onClick={toggle}>
+                {status === "running" ? "Pause" : "Resume"}
+              </button>
+              <button onClick={restart}>Reset</button>
+            </div>
+          )}
+        </>
       )}
     </div>
   );
