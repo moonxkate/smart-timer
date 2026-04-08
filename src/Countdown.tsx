@@ -59,7 +59,7 @@ const Countdown = ({ onGoHome }: CountdownProps) => {
   };
 
   const startCountdown = () => {
-    if (inputMinutes !== "" && inputMinutes > 0) {
+    if (inputMinutes !== "" && inputMinutes > 0 && inputMinutes <= 90) {
       setSeconds(inputMinutes * 60);
       setLastDuration(inputMinutes);
       setStatus("running");
@@ -110,12 +110,16 @@ const Countdown = ({ onGoHome }: CountdownProps) => {
                 type="number"
                 value={inputMinutes}
                 min={1}
+                max={90}
                 onChange={(e) =>
                   setInputMinutes(
                     e.target.value === "" ? "" : Number(e.target.value)
                   )
                 }
               />
+              {Number(inputMinutes) > 90 && (
+                <small>Maximum is 90 minutes</small>
+              )}
               <button onClick={startCountdown}>Start</button>
               <button
                 onClick={requestNotificationPermission}
