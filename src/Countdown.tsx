@@ -12,24 +12,51 @@ const Countdown = ({ onGoHome }: CountdownProps) => {
   const intervalRef = useRef<number | null>(null);
   const [inputMinutes, setInputMinutes] = useState<number | "">(1);
   const [lastDuration, setLastDuration] = useState<number>(1);
+  const [notificationGranted, setNotificationGranted] = useState<boolean>(
+    typeof Notification !== undefined && Notification.permission === "granted"
+  );
 
   useEffect(() => {
     if (status === "running" && seconds > 0) {
       intervalRef.current = window.setInterval(() => {
-        setSeconds((prev) => {
-          if (prev <= 1) {
-            clearInterval(intervalRef.current!);
-            setStatus("finished");
-            return 0;
-          }
-          return prev - 1;
-        });
+        setSeconds((prev) => prev - 1);
       }, 1000);
+    } else if (status === "running" && seconds === 0) {
+      setStatus("finished");
     }
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
+  }, [status, seconds]);
+
+  useEffect(() => {
+    if (status === "finished") {
+      sendNotification();
+    }
   }, [status]);
+
+  const requestNotificationPermission = async () => {
+    if (!("Notification" in window)) return;
+
+    const permission = await Notification.requestPermission();
+    setNotificationGranted(permission === "granted");
+  };
+
+  const sendNotification = () => {
+    if (!("Notification" in window)) return;
+    if (Notification.permission !== "granted") return;
+
+    setTimeout(() => {
+      const audio = new Audio("public/mixkit-clear-announce-tones-2861.wav");
+      audio.play();
+      new Notification("Countdown complete!", {
+        body: "Your timer has finished!",
+        tag: "countdown-complete",
+        requireInteraction: true,
+        silent: true,
+      });
+    }, 100);
+  };
 
   const startCountdown = () => {
     if (inputMinutes !== "" && inputMinutes > 0) {
@@ -90,6 +117,14 @@ const Countdown = ({ onGoHome }: CountdownProps) => {
                 }
               />
               <button onClick={startCountdown}>Start</button>
+              <button
+                onClick={requestNotificationPermission}
+                disabled={notificationGranted}
+              >
+                {notificationGranted
+                  ? "Notifications enabled"
+                  : "Enable notifications"}
+              </button>
               {onGoHome && <button onClick={onGoHome}>Home</button>}
             </div>
           ) : (
