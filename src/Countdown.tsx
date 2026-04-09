@@ -111,55 +111,106 @@ const Countdown = ({ onGoHome }: CountdownProps) => {
   };
 
   return (
-    <div className="timer-page">
-      <h2>Countdown</h2>
+    <div className="min-h-screen bg-neutral-50 flex flex-col items-center justify-center gap-8">
+      <h1 className="text-4xl font-medium tracking-widest text-neutral-900 uppercase">
+        Countdown
+      </h1>
 
       {status === "finished" ? (
         <div className="finished">
-          <h1>Completed</h1>
-          <div className="controls">
-            <button onClick={restart}>Restart</button>
-            <button onClick={reset}>Reset</button>
-            {onGoHome && <button onClick={onGoHome}>Home</button>}
+          <h2 className="text-8xl font-light tracking-wider uppercase text-neutral-800 pb-8">
+            Completed
+          </h2>
+          <div className="flex flex-row justify-center gap-3">
+            <button
+              onClick={restart}
+              className="w-28 py-3 border border-neutral-200 rounded-lg text-neutral-700 tracking-widest text-lg uppercase hover:border-neutral-400 hover:text-neutral-900 transition-colors"
+            >
+              Restart
+            </button>
+            <button
+              onClick={reset}
+              className="w-28 py-3 border border-neutral-200 rounded-lg text-neutral-700 tracking-widest text-lg uppercase hover:border-neutral-400 hover:text-neutral-900 transition-colors"
+            >
+              Reset
+            </button>
+            {onGoHome && (
+              <button
+                onClick={onGoHome}
+                className="w-28 py-3 border border-neutral-200 rounded-lg text-neutral-700 tracking-widest text-lg uppercase hover:border-neutral-400 hover:text-neutral-900 transition-colors"
+              >
+                Home
+              </button>
+            )}
           </div>
         </div>
       ) : (
         <>
-          <h1>{formatTime(seconds)}</h1>
+          <h1 className="text-9xl font-light text-neutral-800">
+            {formatTime(seconds)}
+          </h1>
 
           {status === "inactive" ? (
-            <div className="setup">
-              <input
-                type="number"
-                value={inputMinutes}
-                min={1}
-                max={90}
-                onChange={(e) =>
-                  setInputMinutes(
-                    e.target.value === "" ? "" : Number(e.target.value)
-                  )
-                }
-              />
-              {Number(inputMinutes) > 90 && (
-                <small>Maximum is 90 minutes</small>
-              )}
-              <button onClick={startCountdown}>Start</button>
-              <button
-                onClick={requestNotificationPermission}
-                disabled={notificationGranted}
-              >
-                {notificationGranted
-                  ? "Notifications enabled"
-                  : "Enable notifications"}
-              </button>
-              {onGoHome && <button onClick={onGoHome}>Home</button>}
+            <div className="flex flex-col justify-center gap-5">
+              <div className="flex flex-col items-center justify-center gap-1">
+                <input
+                  type="number"
+                  value={inputMinutes}
+                  min={1}
+                  max={90}
+                  onChange={(e) =>
+                    setInputMinutes(
+                      e.target.value === "" ? "" : Number(e.target.value)
+                    )
+                  }
+                  className="w-24 py-2 text-center border border-neutral-200 rounded-lg text-neutral-800 text-lg bg-transparent focus:outline-none focus:border-neutral-400"
+                />
+                {Number(inputMinutes) > 90 && (
+                  <small className="w-24 text-xs text-red-500 text-center px-1">
+                    Maximum is 90 minutes
+                  </small>
+                )}
+              </div>
+              <div className="flex gap-3">
+                <button
+                  onClick={startCountdown}
+                  className="w-28 py-2 border border-neutral-200 rounded-lg text-neutral-700 tracking-widest uppercase hover:border-neutral-400 hover:text-neutral-900 transition-colors"
+                >
+                  Start
+                </button>
+                <button
+                  onClick={requestNotificationPermission}
+                  disabled={notificationGranted}
+                  className="w-40 py-2 border border-neutral-200 rounded-lg text-neutral-700 tracking-widest uppercase hover:border-neutral-400 hover:text-neutral-900 transition-colors"
+                >
+                  {notificationGranted
+                    ? "Notifications enabled"
+                    : "Enable notifications"}
+                </button>
+                {onGoHome && (
+                  <button
+                    onClick={onGoHome}
+                    className="w-28 py-2 border border-neutral-200 rounded-lg text-neutral-700 tracking-widest uppercase hover:border-neutral-400 hover:text-neutral-900 transition-colors"
+                  >
+                    Home
+                  </button>
+                )}
+              </div>
             </div>
           ) : (
-            <div className="controls">
-              <button onClick={toggle}>
+            <div className="flex gap-3">
+              <button
+                onClick={toggle}
+                className="w-28 py-2 border border-neutral-200 rounded-lg text-neutral-700 tracking-widest uppercase hover:border-neutral-400 hover:text-neutral-900 transition-colors"
+              >
                 {status === "running" ? "Pause" : "Resume"}
               </button>
-              <button onClick={reset}>Reset</button>
+              <button
+                onClick={reset}
+                className="w-28 py-2 border border-neutral-200 rounded-lg text-neutral-700 tracking-widest uppercase hover:border-neutral-400 hover:text-neutral-900 transition-colors"
+              >
+                Reset
+              </button>
             </div>
           )}
         </>

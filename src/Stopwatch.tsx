@@ -51,13 +51,13 @@ const Stopwatch = ({ onGoHome }: StopwatchProps) => {
 
   return (
     <div className="min-h-screen bg-neutral-50 flex flex-col items-center justify-center gap-8">
-      <h2 className="text-4xl font-medium tracking-widest text-neutral-900 uppercase">
+      <h1 className="text-4xl font-medium tracking-widest text-neutral-900 uppercase">
         Stopwatch
-      </h2>
-
-      <h1 className="text-9xl font-light text-neutral-800">
-        {formatTime(seconds)}
       </h1>
+
+      <h2 className="text-9xl font-light text-neutral-800">
+        {formatTime(seconds)}
+      </h2>
 
       <div className="flex gap-3">
         <button
