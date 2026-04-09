@@ -10,24 +10,36 @@ const Countdown = ({ onGoHome }: CountdownProps) => {
   const [seconds, setSeconds] = useState<number>(0);
   const [status, setStatus] = useState<CountdownState>("inactive");
   const intervalRef = useRef<number | null>(null);
+  const startTimeRef = useRef<number | null>(null);
+  const totalSecondsRef = useRef<number>(0);
+  const pausedSecondsRef = useRef<number>(0);
   const [inputMinutes, setInputMinutes] = useState<number | "">(1);
   const [lastDuration, setLastDuration] = useState<number>(1);
   const [notificationGranted, setNotificationGranted] = useState<boolean>(
-    typeof Notification !== undefined && Notification.permission === "granted"
+    typeof Notification !== "undefined" && Notification.permission === "granted"
   );
 
   useEffect(() => {
-    if (status === "running" && seconds > 0) {
+    if (status === "running") {
+      startTimeRef.current = Date.now();
+
       intervalRef.current = window.setInterval(() => {
-        setSeconds((prev) => prev - 1);
-      }, 1000);
-    } else if (status === "running" && seconds === 0) {
-      setStatus("finished");
+        const elapsedTime = (Date.now() - startTimeRef.current!) / 1000;
+        const remainingTime = Math.floor(totalSecondsRef.current - elapsedTime);
+
+        if (remainingTime <= 0) {
+          setSeconds(0);
+          setStatus("finished");
+        } else {
+          setSeconds(remainingTime);
+        }
+      }, 500);
     }
+
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
-  }, [status, seconds]);
+  }, [status]);
 
   useEffect(() => {
     if (status === "finished") {
@@ -60,16 +72,27 @@ const Countdown = ({ onGoHome }: CountdownProps) => {
 
   const startCountdown = () => {
     if (inputMinutes !== "" && inputMinutes > 0 && inputMinutes <= 90) {
-      setSeconds(inputMinutes * 60);
+      const totalSeconds = inputMinutes * 60;
+      totalSecondsRef.current = totalSeconds;
+      setSeconds(totalSeconds);
       setLastDuration(inputMinutes);
       setStatus("running");
     }
   };
 
-  const toggle = () =>
-    setStatus((prev) => (prev === "running" ? "paused" : "running"));
+  const toggle = () => {
+    if (status === "running") {
+      pausedSecondsRef.current = seconds;
+      setStatus("paused");
+    } else {
+      totalSecondsRef.current = pausedSecondsRef.current;
+      startTimeRef.current = Date.now();
+      setStatus("running");
+    }
+  };
 
   const restart = () => {
+    totalSecondsRef.current = lastDuration * 60;
     setSeconds(lastDuration * 60);
     setStatus("running");
   };
