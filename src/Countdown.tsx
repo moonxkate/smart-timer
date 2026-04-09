@@ -118,7 +118,7 @@ const Countdown = ({ onGoHome }: CountdownProps) => {
 
       {status === "finished" ? (
         <div className="finished">
-          <h2 className="text-8xl font-light tracking-wider uppercase text-neutral-800 pb-8">
+          <h2 className="text-5xl md:text-8xl text-center font-light tracking-wider uppercase text-neutral-800 pb-8">
             Completed
           </h2>
           <div className="flex flex-row justify-center gap-3">
@@ -171,10 +171,10 @@ const Countdown = ({ onGoHome }: CountdownProps) => {
                   </small>
                 )}
               </div>
-              <div className="flex gap-3">
+              <div className="flex flex-wrap gap-3">
                 <button
                   onClick={startCountdown}
-                  className="w-28 py-2 border border-neutral-200 rounded-lg text-neutral-700 tracking-widest uppercase hover:border-neutral-400 hover:text-neutral-900 transition-colors"
+                  className="min-w-24 px-4 py-2 border border-neutral-200 rounded-lg text-neutral-700 tracking-widest uppercase hover:border-neutral-400 hover:text-neutral-900 transition-colors"
                 >
                   Start
                 </button>
@@ -190,7 +190,7 @@ const Countdown = ({ onGoHome }: CountdownProps) => {
                 {onGoHome && (
                   <button
                     onClick={onGoHome}
-                    className="w-28 py-2 border border-neutral-200 rounded-lg text-neutral-700 tracking-widest uppercase hover:border-neutral-400 hover:text-neutral-900 transition-colors"
+                    className="min-w-24 px-4 py-2 border border-neutral-200 rounded-lg text-neutral-700 tracking-widest uppercase hover:border-neutral-400 hover:text-neutral-900 transition-colors"
                   >
                     Home
                   </button>
