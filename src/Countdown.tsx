@@ -112,7 +112,7 @@ const Countdown = ({ onGoHome }: CountdownProps) => {
 
   return (
     <div className="min-h-screen bg-neutral-50 flex flex-col items-center justify-center gap-8">
-      <h1 className="text-4xl font-medium tracking-widest text-neutral-900 uppercase">
+      <h1 className="text-3xl md:text-4xl font-medium tracking-widest text-neutral-900 uppercase">
         Countdown
       </h1>
 
