@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from "react";
-import "./App.css";
 
 interface StopwatchProps {
   onGoHome?: () => void;
@@ -51,16 +50,36 @@ const Stopwatch = ({ onGoHome }: StopwatchProps) => {
   };
 
   return (
-    <div className="timer-page">
-      <h2>Stopwatch</h2>
-      <div className="timer-display">
-        <h1>{formatTime(seconds)}</h1>
-      </div>
+    <div className="min-h-screen bg-neutral-50 flex flex-col items-center justify-center gap-8">
+      <h2 className="text-4xl font-medium tracking-widest text-neutral-900 uppercase">
+        Stopwatch
+      </h2>
 
-      <div className="controls">
-        <button onClick={toggle}>{isActive ? "Pause" : "Start"}</button>
-        <button onClick={reset}>Reset</button>
-        {onGoHome && <button onClick={onGoHome}>Home</button>}
+      <h1 className="text-9xl font-light text-neutral-800">
+        {formatTime(seconds)}
+      </h1>
+
+      <div className="flex gap-3">
+        <button
+          onClick={toggle}
+          className="w-28 py-3 border border-neutral-200 rounded-lg text-neutral-700 tracking-widest text-lg uppercase hover:border-neutral-400 hover:text-neutral-900 transition-colors"
+        >
+          {isActive ? "Pause" : "Start"}
+        </button>
+        <button
+          onClick={reset}
+          className="w-28 py-3 border border-neutral-200 rounded-lg text-neutral-700 tracking-widest text-lg uppercase hover:border-neutral-400 hover:text-neutral-900 transition-colors"
+        >
+          Reset
+        </button>
+        {onGoHome && (
+          <button
+            onClick={onGoHome}
+            className="w-28 py-3 border border-neutral-200 rounded-lg text-neutral-700 tracking-widest text-lg uppercase hover:border-neutral-400 hover:text-neutral-900 transition-colors"
+          >
+            Home
+          </button>
+        )}
       </div>
     </div>
   );
