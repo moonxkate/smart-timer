@@ -9,16 +9,17 @@ const Stopwatch = ({ onGoHome }: StopwatchProps) => {
   const [seconds, setSeconds] = useState<number>(0);
   const [isActive, setIsActive] = useState<boolean>(false);
   const intervalRef = useRef<number | null>(null);
+  const startTimeRef = useRef<number>(0);
+  const elapsedTimeBeforePauseRef = useRef<number>(0);
 
   useEffect(() => {
     if (isActive) {
+      startTimeRef.current = Date.now();
+
       intervalRef.current = window.setInterval(() => {
-        setSeconds((prev) => prev + 1);
-      }, 1000);
-    } else {
-      if (intervalRef.current !== null) {
-        clearInterval(intervalRef.current);
-      }
+        const elapsedTime = (Date.now() - startTimeRef.current) / 1000;
+        setSeconds(Math.floor(elapsedTimeBeforePauseRef.current + elapsedTime));
+      }, 500);
     }
 
     return () => {
@@ -28,11 +29,17 @@ const Stopwatch = ({ onGoHome }: StopwatchProps) => {
     };
   }, [isActive]);
 
-  const toggle = () => setIsActive((prev) => !prev);
+  const toggle = () => {
+    if (isActive) {
+      elapsedTimeBeforePauseRef.current = seconds;
+    }
+    setIsActive((prev) => !prev);
+  };
 
   const reset = () => {
     setIsActive(false);
     setSeconds(0);
+    elapsedTimeBeforePauseRef.current = 0;
   };
 
   const formatTime = (totalSeconds: number) => {
