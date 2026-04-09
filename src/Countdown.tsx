@@ -59,7 +59,7 @@ const Countdown = ({ onGoHome }: CountdownProps) => {
     if (Notification.permission !== "granted") return;
 
     setTimeout(() => {
-      const audio = new Audio("public/mixkit-clear-announce-tones-2861.wav");
+      const audio = new Audio("/mixkit-clear-announce-tones-2861.wav");
       audio.play();
       new Notification("Countdown complete!", {
         body: "Your timer has finished!",
