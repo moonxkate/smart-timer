@@ -1,11 +1,39 @@
 import { useState } from "react";
+import { useEffect } from "react";
 import Stopwatch from "./Stopwatch";
 import Countdown from "./Countdown";
+import History from "./History";
 
 type Mode = "home" | "stopwatch" | "countdown";
 
+export interface Session {
+  id: string;
+  date: string;
+  duration: number;
+}
+
 const App = () => {
   const [mode, setMode] = useState<Mode>("home");
+  const [sessions, setSessions] = useState<Session[]>(() => {
+    const saved = localStorage.getItem("timer-sessions");
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  useEffect(() => {
+    localStorage.setItem("timer-sessions", JSON.stringify(sessions));
+  }, [sessions]);
+
+  const addSession = (duration: number) => {
+    if (duration < 1) return;
+    const newSession: Session = {
+      id: Date.now().toString(),
+      date: new Date().toLocaleDateString("en-EN"),
+      duration,
+    };
+    setSessions((prev) => [newSession, ...prev]);
+  };
+
+  const clearHistory = () => setSessions([]);
 
   return (
     <div className="min-h-screen bg-neutral-50 flex items-center justify-center">
@@ -28,10 +56,21 @@ const App = () => {
               Countdown
             </button>
           </div>
+          <History sessions={sessions} onClear={clearHistory} />
         </div>
       )}
-      {mode === "stopwatch" && <Stopwatch onGoHome={() => setMode("home")} />}
-      {mode === "countdown" && <Countdown onGoHome={() => setMode("home")} />}
+      {mode === "stopwatch" && (
+        <Stopwatch
+          onGoHome={() => setMode("home")}
+          onSaveSession={(duration) => addSession(duration)}
+        />
+      )}
+      {mode === "countdown" && (
+        <Countdown
+          onGoHome={() => setMode("home")}
+          onSaveSession={(duration) => addSession(duration)}
+        />
+      )}
     </div>
   );
 };
