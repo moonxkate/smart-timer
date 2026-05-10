@@ -4,9 +4,10 @@ type CountdownState = "inactive" | "running" | "paused" | "finished";
 
 interface CountdownProps {
   onGoHome?: () => void;
+  onSaveSession: (duration: number) => void;
 }
 
-const Countdown = ({ onGoHome }: CountdownProps) => {
+const Countdown = ({ onGoHome, onSaveSession }: CountdownProps) => {
   const [seconds, setSeconds] = useState<number>(0);
   const [status, setStatus] = useState<CountdownState>("inactive");
   const intervalRef = useRef<number | null>(null);
@@ -44,6 +45,7 @@ const Countdown = ({ onGoHome }: CountdownProps) => {
   useEffect(() => {
     if (status === "finished") {
       sendNotification();
+      onSaveSession(lastDuration * 60);
     }
   }, [status]);
 
