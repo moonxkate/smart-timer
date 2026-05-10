@@ -2,9 +2,10 @@ import { useState, useEffect, useRef } from "react";
 
 interface StopwatchProps {
   onGoHome?: () => void;
+  onSaveSession: (duration: number) => void;
 }
 
-const Stopwatch = ({ onGoHome }: StopwatchProps) => {
+const Stopwatch = ({ onGoHome, onSaveSession }: StopwatchProps) => {
   const [seconds, setSeconds] = useState<number>(0);
   const [isActive, setIsActive] = useState<boolean>(false);
   const intervalRef = useRef<number | null>(null);
@@ -36,6 +37,9 @@ const Stopwatch = ({ onGoHome }: StopwatchProps) => {
   };
 
   const reset = () => {
+    if (seconds > 0) {
+      onSaveSession(seconds);
+    }
     setIsActive(false);
     setSeconds(0);
     elapsedTimeBeforePauseRef.current = 0;
