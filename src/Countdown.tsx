@@ -99,6 +99,15 @@ const Countdown = ({ onGoHome, onSaveSession }: CountdownProps) => {
     setStatus("running");
   };
 
+  const stop = () => {
+    const elapsed = lastDuration * 60 - seconds;
+    if (elapsed > 0) {
+      onSaveSession(elapsed);
+    }
+    setSeconds(0);
+    setStatus("inactive");
+  };
+
   const reset = () => {
     setSeconds(0);
     setStatus("inactive");
@@ -208,10 +217,10 @@ const Countdown = ({ onGoHome, onSaveSession }: CountdownProps) => {
                 {status === "running" ? "Pause" : "Resume"}
               </button>
               <button
-                onClick={reset}
+                onClick={stop}
                 className="w-28 py-2 border border-neutral-200 rounded-lg text-neutral-700 tracking-widest uppercase hover:border-neutral-400 hover:text-neutral-900 transition-colors"
               >
-                Reset
+                Stop
               </button>
             </div>
           )}
